@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card, CardContent } from "../components/ui/card"
+import { Card, CardContent } from "../components/ui/card";
 import { cv } from '../data/cv';
 import { marked } from 'marked';
 
