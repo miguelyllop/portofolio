@@ -1,0 +1,21 @@
+[
+    {
+      "title": "Project 1",
+      "attachments": [
+        {
+          "type": "image",
+          "url": "url_to_image.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Project 2",
+      "attachments": [
+        {
+          "type": "video",
+          "url": "url_to_video.mp4"
+        }
+      ]
+    }
+  ]
+  

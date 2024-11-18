@@ -1,0 +1,16 @@
+{
+    "about": "<h2>About Me</h2><p>I'm a product designer...</p>",
+    "contact": [
+      {
+        "platform": "Email",
+        "url": "mailto:example@example.com",
+        "handle": "example@example.com"
+      },
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/in/yourname",
+        "handle": "@yourname"
+      }
+    ]
+  }
+  
