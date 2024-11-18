@@ -57,7 +57,7 @@ function App() {
               />
               <div className="gallery-description">
                 <p>
-                  Hey, I'm a product designer who's all about putting people first...
+                  Hey, I'm a product designeer who's all about putting people first...
                 </p>
               </div>
             </div>
