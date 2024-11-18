@@ -1,105 +1,79 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { projects } from './projects'; // Importa los proyectos desde el archivo
-import Navigation from './Navigation'; // Tu componente de navegación
-import HorizontalGallery from './HorizontalGallery'; // Componente de galería horizontal
-import ProjectIndex from './ProjectIndex'; // Componente de índice de proyectos
-import ProjectItem from './ProjectItem'; // Componente de vista de proyecto
-import About from './About'; // Componente de vista de "about"
+import { Navigation } from './components/Navigation';
+import { HorizontalGallery } from './components/HorizontalGallery';
+import { ProjectIndex } from './components/ProjectIndex';
+import { ProjectItem } from './components/ProjectItem';
+import { About } from './components/About';
+import { cv } from './data/cv';
 
-function App() {
+export default function App() {
+  const [view, setView] = useState('work');
   const [currentProject, setCurrentProject] = useState(null);
   const [currentProjectName, setCurrentProjectName] = useState('');
   const [isVisible, setIsVisible] = useState(false);
-  const [transitionClass, setTransitionClass] = useState('hidden');
+  const [transitionClass, setTransitionClass] = useState('opacity-0');
 
-  // Filtra los proyectos que tienen archivos adjuntos
-  const filteredProjects = projects.filter(project => project.attachments.length > 0);
+  const allProjects = [...cv.projects, ...cv.sideProjects].filter(x => x.attachments.length > 0);
+
+  const handleProjectChange = (projectName) => {
+    setCurrentProjectName(projectName);
+  };
 
   const handleProjectClick = (project) => {
-    setCurrentProject(project); // Guarda el proyecto clickeado
-    setCurrentProjectName(project.title); // Actualiza el nombre del proyecto
+    setCurrentProject(project);
+    setCurrentProjectName(project.title);
+    setView('project');
   };
 
   useEffect(() => {
-    setTransitionClass('hidden');
+    setTransitionClass('opacity-0');
     setIsVisible(false);
-
     const timer = setTimeout(() => {
       setIsVisible(true);
-      setTransitionClass('visible');
+      setTransitionClass('opacity-100');
     }, 600);
-
     return () => clearTimeout(timer);
-  }, []);
+  }, [view]);
 
   return (
-    <Router>
-      <div>
-        {/* Componente de navegación */}
-        <Navigation 
-          currentProjectName={currentProjectName} 
-          setCurrentProject={setCurrentProject} 
-          setCurrentProjectName={setCurrentProjectName} 
-        />
-
-        {/* Contenido principal con transiciones */}
-        <div className={`content ${transitionClass}`}>
-          <Switch>
-            <Route path="/work">
-              <div className="work-view">
-                <div className="horizontal-gallery">
-                  {/* Componente de galería horizontal */}
-                  <HorizontalGallery 
-                    projects={filteredProjects} 
-                    onProjectClick={handleProjectClick}
-                  />
-                  <div className="gallery-description">
-                    <p>
-                      Hey, I'm a product designer who's all about putting people first...
-                    </p>
-                  </div>
-                </div>
-                <div className="project-index">
-                  {/* Componente de índice de proyectos */}
-                  <ProjectIndex 
-                    onProjectClick={handleProjectClick} 
-                    setDisplayedProjectName={setCurrentProjectName} 
-                  />
-                </div>
-              </div>
-            </Route>
-
-            <Route path="/project/:projectName">
-              {currentProject && (
-                <div className="project-view">
-                  {/* Detalles del proyecto */}
-                  <ProjectItem 
-                    project={currentProject} 
-                    setCurrentProject={setCurrentProject} 
-                    setCurrentProjectName={setCurrentProjectName} 
-                  />
-                </div>
-              )}
-            </Route>
-
-            <Route path="/about">
-              <div className="about-view">
-                <About />
-              </div>
-            </Route>
-
-            {/* Ruta por defecto */}
-            <Route path="/">
-              <div className="home-view">
-                <h1>Welcome to my Portfolio!</h1>
-              </div>
-            </Route>
-          </Switch>
-        </div>
-      </div>
-    </Router>
+    <div className="min-h-screen bg-background">
+      <Navigation setView={setView} />
+      <main className={`transition-opacity duration-500 ${transitionClass}`}>
+        {view === 'work' && (
+          <div className="container mx-auto px-4 py-8">
+            <HorizontalGallery 
+              projects={allProjects} 
+              onProjectChange={handleProjectChange} 
+            />
+            <div className="mt-8 text-foreground">
+              <p className="mb-4">
+                Hey, I'm a product designer who's all about putting people first. I've been diving deep into the world of native iOS design, whipping up intuitive interfaces and animations that make you feel like you're interacting with the real deal. It's like having a little slice of life right in the palm of your hand.
+              </p>
+              <p className="mb-4">
+                I'm not just about following trends or jumping on the latest tech bandwagon. Nah, I'm more into getting to the heart of what makes people tick. I do my homework, chatting with folks, digging through online research, and putting myself in their shoes to really get a feel for what they need, even if they don't know it themselves.
+              </p>
+              <p>
+                At the end of the day, I'm here to make products that don't just look pretty, but actually connect with people on a deeper level.
+              </p>
+            </div>
+            <ProjectIndex 
+              projects={allProjects}
+              onProjectClick={handleProjectClick}
+              setCurrentProjectName={setCurrentProjectName}
+            />
+          </div>
+        )}
+        {view === 'project' && currentProject && (
+          <ProjectItem 
+            project={currentProject}
+            setView={setView}
+            setCurrentProject={setCurrentProject}
+          />
+        )}
+        {view === 'about' && (
+          <About />
+        )}
+      </main>
+    </div>
   );
 }
-
-export default App;

@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
-import projectsData from './lib/projectsData.json'; // Importa los datos de los proyectos
 
-// Optional: Include wheel scrolling logic if needed
 const WheelControls = (slider) => {
   let touchTimeout;
   let position;
@@ -61,7 +59,7 @@ const WheelControls = (slider) => {
   });
 };
 
-function HorizontalGallery({ onProjectChange, onProjectClick }) {
+export function HorizontalGallery({ projects, onProjectChange, onProjectClick }) {
   const [sliderRef] = useKeenSlider({
     loop: true,
     mode: 'free-snap',
@@ -79,7 +77,7 @@ function HorizontalGallery({ onProjectChange, onProjectClick }) {
     },
     slideChanged(s) {
       const currentIndex = s.track.details.rel;
-      onProjectChange(projectsData[Math.round(currentIndex)]?.title || '');
+      onProjectChange(projects[Math.round(currentIndex)]?.title || '');
     }
   }, [WheelControls]);
 
@@ -92,52 +90,37 @@ function HorizontalGallery({ onProjectChange, onProjectClick }) {
   };
 
   return (
-    <div>
-      {/* Gallery slider */}
-      <div ref={sliderRef} className="keen-slider">
-        {projectsData.map((project, index) => (
-          <div
-            key={index}
-            className="keen-slider__slide"
-            onMouseOver={() => handleMouseOver(project.title)}
-            onMouseOut={handleMouseOut}
-            onClick={() => onProjectClick(project)} // Añadir manejo de clics
-          >
-            {project.attachments.length > 0 && (
-              project.attachments[0].type === 'image' ? (
-                <img
-                  src={project.attachments[0].url}
-                  alt={`${project.title} image`}
-                  style={{ 
-                    width: 'auto', 
-                    height: '90vh', 
-                    maxWidth: '1000px',  
-                    objectFit: 'contain'  
-                  }}
-                />
-              ) : (
-                <video
-                  src={project.attachments[0].url}
-                  autoPlay
-                  muted
-                  playsInline
-                  loop // Mantén el loop aquí
-                  style={{ 
-                    width: 'auto', 
-                    height: '90vh', 
-                    maxWidth: '1000px',  
-                    objectFit: 'contain'  
-                  }}
-                >
-                  <source src={project.attachments[0].url} type="video/mp4" />
-                </video>
-              )
-            )}
-          </div>
-        ))}
-      </div>
+    <div ref={sliderRef} className="keen-slider">
+      {projects.map((project, index) => (
+        <div
+          key={index}
+          className="keen-slider__slide"
+          onMouseOver={() => handleMouseOver(project.title)}
+          onMouseOut={handleMouseOut}
+          onClick={() => onProjectClick(project)}
+        >
+          {project.attachments.length > 0 && (
+            project.attachments[0].type === 'image' ? (
+              <img
+                src={project.attachments[0].url}
+                alt={`${project.title} image`}
+                className="w-auto h-[90vh] max-w-[1000px] object-contain"
+              />
+            ) : (
+              <video
+                src={project.attachments[0].url}
+                autoPlay
+                muted
+                playsInline
+                loop
+                className="w-auto h-[90vh] max-w-[1000px] object-contain"
+              >
+                <source src={project.attachments[0].url} type="video/mp4" />
+              </video>
+            )
+          )}
+        </div>
+      ))}
     </div>
   );
 }
-
-export default HorizontalGallery;

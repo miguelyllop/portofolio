@@ -1,61 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Card, CardContent } from "../components/ui/card"
+import { cv } from '../data/cv';
 import { marked } from 'marked';
-import aboutData from './lib/aboutData.json'; // Importa los datos del archivo JSON
 
-function About() {
-  const [aboutContent, setAboutContent] = useState('');
-  const [contactItems, setContactItems] = useState([]);
-
-  // Cargar la información al inicio
+export function About() {
   useEffect(() => {
-    setAboutContent(marked(aboutData.about)); // Convierte el markdown a HTML
-    setContactItems(aboutData.contact); // Establece los contactos
     const sections = document.querySelectorAll('.about-section, .contact-section');
 
     sections.forEach((section, index) => {
       setTimeout(() => {
         section.style.opacity = 1;
         section.style.transform = 'translateY(0)';
-      }, index * 100); // Ajusta el retraso si es necesario
+      }, index * 100);
     });
   }, []);
 
   return (
-    <div>
-      {/* About Section */}
-      <section
-        className="about-section section"
-        style={{
-          opacity: 0,
-          transform: 'translateY(20px)',
-          transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
-        }}
-      >
-        <div dangerouslySetInnerHTML={{ __html: aboutContent }} />
-      </section>
+    <div className="container mx-auto px-4 py-8">
+      <Card className="mb-8">
+        <CardContent>
+          <section
+            className="about-section"
+            style={{
+              opacity: 0,
+              transform: 'translateY(20px)',
+              transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
+            }}
+          >
+            <div dangerouslySetInnerHTML={{ __html: marked(cv.general.about) }} />
+          </section>
+        </CardContent>
+      </Card>
 
-      {/* Contact Section */}
-      <section
-        className="contact-section section"
-        style={{
-          opacity: 0,
-          transform: 'translateY(20px)',
-          transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
-        }}
-      >
-        <ul className="contact-list">
-          {contactItems.map((contactItem, index) => (
-            <li key={index} className="contact-item">
-              {contactItem.platform} — 
-              <a href={contactItem.url} target="_blank" rel="noopener noreferrer">
-                {contactItem.handle}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <Card>
+        <CardContent>
+          <section
+            className="contact-section"
+            style={{
+              opacity: 0,
+              transform: 'translateY(20px)',
+              transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
+            }}
+          >
+            <ul className="space-y-2">
+              {cv.contact.map((contactItem, index) => (
+                <li key={index} className="flex items-center space-x-2">
+                  <span className="font-bold">{contactItem.platform}</span>
+                  <span>—</span>
+                  <a href={contactItem.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                    {contactItem.handle}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </CardContent>
+      </Card>
     </div>
   );
 }
-
-export default About;

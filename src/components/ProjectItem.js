@@ -1,11 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import ReactPlayer from 'react-player';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Button } from "../components/ui/button"
+import { Card, CardContent } from "../components/ui/card"
+import ReactPlayer from 'react-player'
 
-function ProjectItem({ projects }) {
-  const { projectId } = useParams(); // Obtén el ID del proyecto desde la URL
-  const project = projects.find((p) => p.id === projectId); // Encuentra el proyecto por su ID
-
+export function ProjectItem({ project, setCurrentProject, setCurrentProjectName, setView }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const galleryRef = useRef(null);
 
@@ -29,51 +27,45 @@ function ProjectItem({ projects }) {
   }, []);
 
   return (
-    <div className="project-item-container">
-      <div
-        className="main-media-display"
-        ref={galleryRef}
-        style={{ overflowX: 'auto', whiteSpace: 'nowrap', marginTop: '20px' }}
-      >
-        <div className="side-by-side-media" style={{ display: 'flex' }}>
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardContent className="p-6">
+        <div
+          ref={galleryRef}
+          className="overflow-x-auto whitespace-nowrap mb-6"
+        >
+          <div className="flex space-x-4">
+            {project.attachments.map((attachment, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-1/2 max-h-[500px] overflow-hidden"
+              >
+                {attachment.type === 'image' ? (
+                  <img
+                    src={attachment.url}
+                    alt={`Media ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <ReactPlayer
+                    url={attachment.url}
+                    width="100%"
+                    height="100%"
+                    controls
+                    muted
+                    playing={index === currentIndex}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex space-x-2 mb-6 overflow-x-auto">
           {project.attachments.map((attachment, index) => (
             <div
               key={index}
-              className="media-item"
-              style={{
-                flexShrink: 0,
-                width: 'calc(50% - 5px)',
-                marginRight: index % 2 === 0 ? '5px' : '0',
-                maxHeight: '1000px',
-                overflow: 'hidden',
-              }}
+              className={`cursor-pointer ${currentIndex === index ? 'ring-2 ring-primary' : ''}`}
+              onClick={() => handleThumbnailClick(index)}
             >
-              {attachment.type === 'image' ? (
-                <img
-                  src={attachment.url}
-                  alt={`Media ${index + 1}`}
-                  className="media-content"
-                  style={{ height: '100%', width: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <ReactPlayer
-                  url={attachment.url}
-                  width="100%"
-                  height="100%"
-                  controls
-                  muted
-                  playing={index === currentIndex} // Autoplay only the current media item
-                  style={{ maxHeight: '1000px' }}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="thumbnail-container" style={{ marginTop: '20px' }}>
-        <div className="thumbnail-wrapper">
-          {project.attachments.map((attachment, index) => (
-            <div key={index} className={`thumbnail ${currentIndex === index ? 'active' : ''}`} onClick={() => handleThumbnailClick(index)}>
               {attachment.type === 'video' ? (
                 <ReactPlayer
                   url={attachment.url}
@@ -84,25 +76,27 @@ function ProjectItem({ projects }) {
                   loop={true}
                 />
               ) : (
-                <img src={attachment.url} alt={`Thumbnail ${index + 1}`} style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+                <img src={attachment.url} alt={`Thumbnail ${index + 1}`} className="w-[50px] h-[50px] object-cover" />
               )}
             </div>
           ))}
         </div>
-      </div>
-      <div className="title-description-container">
-        <div className="details-left">
-          {/* Back to Gallery Button */}
-          <Link to="/work" className="back-to-gallery-button">
+        <div className="flex justify-between items-start">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setCurrentProject(null);
+              setCurrentProjectName('');
+              setView('work');
+            }}
+          >
             Back to Gallery
-          </Link>
-          <div className="description-right">
-            <p className="project-description">{project.description}</p>
+          </Button>
+          <div className="max-w-lg">
+            <p className="text-muted-foreground">{project.description}</p>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
-
-export default ProjectItem;
