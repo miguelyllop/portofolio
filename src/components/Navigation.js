@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button"
 import { cv } from '../data/cv';
 
 export function Navigation({ view, setView, currentProjectName, setCurrentProject, setCurrentProjectName }) {
